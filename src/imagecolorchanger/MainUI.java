@@ -14,14 +14,16 @@ import java.awt.image.LookupOp;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 
 
@@ -33,7 +35,6 @@ public class MainUI extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 6342252179307369875L;
 	private JButton button_prev_image;
 	private JButton button_next_image;
-	private JPanel main_panel;
 	private JPanel img_panel;
 	private JPanel nav_panel;
 	private JPanel settings_panel;
@@ -46,10 +47,22 @@ public class MainUI extends JFrame implements ActionListener{
 	private JLabel w2;
 	private JLabel w3;
 	private JLabel w4;
-	private JComboBox<String> cb1; 
-	private JComboBox<String> cb2;
-	private JComboBox<String> cb3 ;
-	private JComboBox<String> cb4 ;
+	private JTextField tf1; 
+	private JTextField tf2; 
+	private JTextField tf3; 
+	private JTextField tf4;
+	private Color to1; 
+	private Color to2; 
+	private Color to3;
+	private Color to4;
+	private Color to5;
+	private Color from1; 
+	private Color from2; 
+	private Color from3;
+	private Color from4;
+	private Color from5;
+	
+	
 	
 	
 	public MainUI()
@@ -191,23 +204,61 @@ public class MainUI extends JFrame implements ActionListener{
 		w3 = new JLabel("Wand Regal:");
 		w4 = new JLabel("Wand Schreibtisch:");
 		
+		tf1 = new JTextField("#A3A623");
+		tf2 = new JTextField("#002364");
+		tf3 = new JTextField("#640023");
+		tf4 = new JTextField("#FF6400");
 		
-		String[] colors = {"weiß","schwarz","grün","blau","gelb","orange","rot","lila"};
-		
-		cb1 = new JComboBox<String>(colors);
-		cb2 = new JComboBox<String>(colors);
-		cb3 = new JComboBox<String>(colors);
-		cb4 = new JComboBox<String>(colors);
+		Action action = new AbstractAction()
+		{
+		    /**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
+		    public void actionPerformed(ActionEvent e)
+		    {
+				if(e.getSource() == tf1)
+		        {
+					updateImage();
+		        }
+				else if(e.getSource() == tf2)
+		        {
+					updateImage();
+		        }
+				else if(e.getSource() == tf3)
+		        {
+					updateImage();
+		        }
+				else if(e.getSource() == tf4)
+		        {
+					updateImage();
+		        }
+		    }
+		};
+
+		tf1.addActionListener(action);
+		tf2.addActionListener(action);
+		tf3.addActionListener(action);
+		tf4.addActionListener(action);
 		
 		settings_panel.add(w1);
-		settings_panel.add(cb1);
+		settings_panel.add(tf1);
 		settings_panel.add(w2);
-		settings_panel.add(cb2);
+		settings_panel.add(tf2);
 		settings_panel.add(w3);
-		settings_panel.add(cb3);
+		settings_panel.add(tf3);
 		settings_panel.add(w4);
-		settings_panel.add(cb4);
+		settings_panel.add(tf4);
 		
+		from1 = Color.decode(tf1.getText());
+		from2 = Color.decode(tf2.getText());
+		from3 = Color.decode(tf3.getText());
+		from4 = Color.decode(tf4.getText());
+		from5 = Color.decode("#23B14D");
+		
+		updateImage(("./img/room/1.jpg"));
 		}
 
 	@Override
@@ -218,34 +269,17 @@ public class MainUI extends JFrame implements ActionListener{
 		if(e.getSource()==this.button_next_image){
 			updateImage(Main.nextImg());
 		}
-		
-		if(e.getSource()==this.button_next_image || e.getSource()==this.button_prev_image)
-		{
-			switch(Main.imageNum)
-			{
-				case 1:
-					Font f = w1.getFont();
-					w1.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-					break;
-				case 2:
-					f = w2.getFont();
-					w2.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-					break;
-				case 3:
-					f = w3.getFont();
-					w3.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-					break;
-				case 4:
-					f = w4.getFont();
-					w4.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-					break;
-			}
-		}
-		
+	}
+	private String currentUrl;
+
+	private void updateImage()
+	{
+		updateImage(currentUrl);
 	}
 	
 	private void updateImage(String url)
 	{
+		currentUrl = url;
 		File f = new File(url);
 		try{
 			this.remove(img_panel);
@@ -263,19 +297,12 @@ public class MainUI extends JFrame implements ActionListener{
 				}
 			};
 			
-			
-			Color from1 = Color.decode("#FF7F27"); //orange (regal)
-			Color from2 = Color.decode("#A349A3"); //lila (schreibtisch)
-			Color from3 = Color.decode("#ED1C24"); //rot (bett)
-			Color from4 = Color.decode("#00A3E8"); //blau (fenster)
-			
-			String colorw1 = cb1.getSelectedItem().toString(); //fenster
-			String colorw2 = cb1.getSelectedItem().toString(); //bett
-			String colorw3 = cb1.getSelectedItem().toString(); //regal
-			String colorw4 = cb1.getSelectedItem().toString(); //schreibtisch
-			
-			Color to1 = Color.decode("#FFFFFF"); //weiß
-			Color to2 = Color.decode("#000000"); //schwarz
+			to1 = Color.decode(tf1.getText()); 
+			System.out.println(tf1.getText());
+			to2 = Color.decode(tf2.getText()); 
+			to3 = Color.decode(tf3.getText()); 
+			to4 = Color.decode(tf4.getText()); 
+			to5 = Color.decode("#FFFFFF"); //
 			
 			Image image = ImageIO.read(f);
 			image = Main.getScaledImage(image,imageWidth,imageHeight);
@@ -284,16 +311,19 @@ public class MainUI extends JFrame implements ActionListener{
 			BufferedImageOp lookup = new LookupOp(new ColorMapper(from1, to1), null);
 			BufferedImage convertedImage = lookup.filter(bimage, null);
 			
-			BufferedImageOp lookup2 = new LookupOp(new ColorMapper(from2, to1), null);
+			BufferedImageOp lookup2 = new LookupOp(new ColorMapper(from2, to2), null);
 			BufferedImage convertedImage2 = lookup2.filter(convertedImage, null);
 			
-			BufferedImageOp lookup3 = new LookupOp(new ColorMapper(from3, to2), null);
+			BufferedImageOp lookup3 = new LookupOp(new ColorMapper(from3, to3), null);
 			BufferedImage convertedImage3 = lookup3.filter(convertedImage2, null);
 			
-			BufferedImageOp lookup4 = new LookupOp(new ColorMapper(from4, to2), null);
+			BufferedImageOp lookup4 = new LookupOp(new ColorMapper(from4, to4), null);
 			BufferedImage convertedImage4 = lookup4.filter(convertedImage3, null);
 			
-			ImageIcon imgIcon = new ImageIcon(convertedImage4);
+			BufferedImageOp lookup5 = new LookupOp(new ColorMapper(from5, to5), null);
+			BufferedImage convertedImage5 = lookup5.filter(convertedImage4, null);
+			
+			ImageIcon imgIcon = new ImageIcon(convertedImage5);
 			label = new JLabel();
 			label.setIcon(imgIcon);
 			img_panel.add(label);
