@@ -1,5 +1,6 @@
 package imagecolorchanger;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -7,6 +8,9 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.LookupOp;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -18,6 +22,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 
 
 public class MainUI extends JFrame implements ActionListener{
@@ -41,7 +46,12 @@ public class MainUI extends JFrame implements ActionListener{
 	private JLabel w2;
 	private JLabel w3;
 	private JLabel w4;
-
+	private JComboBox<String> cb1; 
+	private JComboBox<String> cb2;
+	private JComboBox<String> cb3 ;
+	private JComboBox<String> cb4 ;
+	
+	
 	public MainUI()
 	{
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -169,7 +179,7 @@ public class MainUI extends JFrame implements ActionListener{
 		};
 		Icon arrow_prev = new ImageIcon("./img/arrows/back128x128.png");
 		button_prev_image.setIcon((Icon) arrow_prev);
-		button_prev_image.addActionListener((ActionListener) this);
+		button_prev_image.addActionListener(this);
 		
 		nav_panel.add(button_prev_image);
 		nav_panel.add(button_next_image);
@@ -183,12 +193,11 @@ public class MainUI extends JFrame implements ActionListener{
 		
 		
 		String[] colors = {"weiß","schwarz","grün","blau","gelb","orange","rot","lila"};
-		String[] colors2 = {"hellblau","weiß","schwarz","grün","blau","gelb","orange","rot","lila"};
 		
-		JComboBox<String> cb1 = new JComboBox<String>(colors);
-		JComboBox<String> cb2 = new JComboBox<String>(colors);
-		JComboBox<String> cb3 = new JComboBox<String>(colors2);
-		JComboBox<String> cb4 = new JComboBox<String>(colors);
+		cb1 = new JComboBox<String>(colors);
+		cb2 = new JComboBox<String>(colors);
+		cb3 = new JComboBox<String>(colors);
+		cb4 = new JComboBox<String>(colors);
 		
 		settings_panel.add(w1);
 		settings_panel.add(cb1);
@@ -252,11 +261,41 @@ public class MainUI extends JFrame implements ActionListener{
 				public Dimension getPreferredSize() {
 				    return new Dimension(imageWidth,imageHeight);
 				}
-			};Image img = ImageIO.read(f);
-			img = Main.getScaledImage(img,imageWidth,imageHeight);
-			ImageIcon image = new ImageIcon(img);
+			};
+			
+			
+			Color from1 = Color.decode("#FF7F27"); //orange (regal)
+			Color from2 = Color.decode("#A349A3"); //lila (schreibtisch)
+			Color from3 = Color.decode("#ED1C24"); //rot (bett)
+			Color from4 = Color.decode("#00A3E8"); //blau (fenster)
+			
+			String colorw1 = cb1.getSelectedItem().toString(); //fenster
+			String colorw2 = cb1.getSelectedItem().toString(); //bett
+			String colorw3 = cb1.getSelectedItem().toString(); //regal
+			String colorw4 = cb1.getSelectedItem().toString(); //schreibtisch
+			
+			Color to1 = Color.decode("#FFFFFF"); //weiß
+			Color to2 = Color.decode("#000000"); //schwarz
+			
+			Image image = ImageIO.read(f);
+			image = Main.getScaledImage(image,imageWidth,imageHeight);
+			BufferedImage bimage = Main.toBufferedImage(image);
+			
+			BufferedImageOp lookup = new LookupOp(new ColorMapper(from1, to1), null);
+			BufferedImage convertedImage = lookup.filter(bimage, null);
+			
+			BufferedImageOp lookup2 = new LookupOp(new ColorMapper(from2, to1), null);
+			BufferedImage convertedImage2 = lookup2.filter(convertedImage, null);
+			
+			BufferedImageOp lookup3 = new LookupOp(new ColorMapper(from3, to2), null);
+			BufferedImage convertedImage3 = lookup3.filter(convertedImage2, null);
+			
+			BufferedImageOp lookup4 = new LookupOp(new ColorMapper(from4, to2), null);
+			BufferedImage convertedImage4 = lookup4.filter(convertedImage3, null);
+			
+			ImageIcon imgIcon = new ImageIcon(convertedImage4);
 			label = new JLabel();
-			label.setIcon(image);
+			label.setIcon(imgIcon);
 			img_panel.add(label);
 			
 			l.setHorizontalGroup(
